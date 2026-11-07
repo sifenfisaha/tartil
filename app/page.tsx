@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Arrow } from "@/components/arrow";
 import { CornerIndex, IndexTrigger } from "@/components/corner-index";
+import { Wordmark } from "@/components/wordmark";
 import { ContinueLink, LessonToggle, ResetProgress, WatchedCount } from "@/components/progress";
 import {
   CHANNEL_URL,
@@ -109,11 +110,11 @@ function Poster() {
       </div>
 
       <p
-        className="rise wordmark pb-9 text-[clamp(24px,2.6vw,32px)]"
+        className="rise pb-9 text-[clamp(24px,2.6vw,32px)]"
         style={{ "--i": 5 } as React.CSSProperties}
         aria-hidden
       >
-        TARTĪL.
+        <Wordmark />
       </p>
     </section>
   );
@@ -442,7 +443,9 @@ function Colophon() {
         </div>
       </div>
 
-      <p className="wordmark pb-9 text-[clamp(24px,2.6vw,32px)]">TARTĪL.</p>
+      <p className="pb-9 text-[clamp(24px,2.6vw,32px)]">
+        <Wordmark />
+      </p>
     </footer>
   );
 }

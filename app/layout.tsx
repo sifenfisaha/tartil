@@ -15,10 +15,31 @@ const amiri = Amiri({
   display: "swap",
 });
 
+const title = "Tartīl — A roadmap for learning Tajweed";
+const description =
+  "Seventy-nine lessons from the Arabic 101 channel, arranged in nine stages: the letters, their character, the rules, the page, the breath, and your own voice.";
+
+// The share image itself comes from app/opengraph-image.jpg and app/twitter-image.jpg
+// (rendered from design/og-card.html); Next.js adds those tags and their sizes.
 export const metadata: Metadata = {
-  title: "Tartīl — A roadmap for learning Tajweed",
-  description:
-    "Seventy-nine lessons from the Arabic 101 channel, arranged in nine stages: the letters, their character, the rules, the page, the breath, and your own voice.",
+  metadataBase: new URL("https://tartil.seefun.dev"),
+  title,
+  description,
+  applicationName: "Tartīl",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Tartīl",
+    title,
+    description,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
 };
 
 export const viewport: Viewport = {

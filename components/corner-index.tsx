@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ContinueLink, WatchedCount, useWatched } from "@/components/progress";
+import { Wordmark } from "@/components/wordmark";
 
 type StageEntry = { n: string; slug: string; name: string; ids: string[] };
 type LessonEntry = { id: string; stage: string; index: number; title: string };
@@ -157,8 +158,8 @@ export function CornerIndex({
             </div>
           </div>
 
-          <p aria-hidden className="wordmark text-center text-[20px]">
-            TARTĪL.
+          <p aria-hidden className="text-center text-[20px]">
+            <Wordmark />
           </p>
         </div>
       </dialog>
