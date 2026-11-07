@@ -1,26 +1,310 @@
 @import "tailwindcss";
 
+/*
+ * Tartīl — a printed-page system.
+ * Warm paper, one ink, hairline rules. Hierarchy comes from weight,
+ * tracking and space, never from colour.
+ */
+
+@theme {
+  --color-paper: #ecebe6;
+  --color-paper-deep: #e3e2dc;
+  --color-ink: #161514;
+  --color-ink-2: #55534f;
+  --color-ink-3: #8c8a85;
+  --color-rule: rgb(22 21 20 / 0.13);
+
+  --font-sans: var(--font-jost), var(--font-amiri), ui-sans-serif, system-ui, sans-serif;
+  --font-arabic: var(--font-amiri), serif;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0 0.06 0 0 0 0.9 -0.36'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    color-scheme: light;
+    background: var(--color-paper);
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    min-height: 100svh;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.65;
+    font-feature-settings: "kern", "liga";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Paper grain. Fixed, above everything, never interactive. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.2;
+    background-image: var(--grain);
+    background-size: 220px 220px;
+  }
+
+  /* The index sheet lives in the top layer, above body::after, so it carries its own grain. */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-ink);
+    outline-offset: 4px;
+  }
+
+  [lang="ar"] {
+    font-family: var(--font-arabic);
+    font-feature-settings: normal;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ---------- type ---------- */
+
+@utility label {
+  font-size: 10.5px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+@utility meta {
+  font-size: 12px;
+  line-height: 1.55;
+  letter-spacing: 0.015em;
+  color: var(--color-ink-2);
+}
+
+@utility stamp {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  font-variant-numeric: tabular-nums;
+  /* tracking adds trailing space after the last glyph; pull it back so right edges align */
+  margin-right: -0.3em;
+}
+
+@utility wordmark {
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  line-height: 1;
+}
+
+@utility statement {
+  font-size: clamp(21px, 2.3vw, 27px);
+  line-height: 1.38;
+  font-weight: 350;
+  letter-spacing: -0.006em;
+  text-wrap: pretty;
+}
+
+/* ---------- links ---------- */
+
+@utility link-quiet {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: var(--color-rule);
+  transition: text-decoration-color 160ms ease-out, color 160ms ease-out;
+
+  &:hover {
+    @media (hover: hover) {
+      text-decoration-color: currentColor;
+    }
+  }
+}
+
+/* ---------- watched toggle ---------- */
+
+@layer components {
+  .toggle-box {
+    display: block;
+    width: 13px;
+    height: 13px;
+    border: 1px solid rgb(22 21 20 / 0.42);
+    background-color: transparent;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 9px 9px;
+    transition:
+      background-color 140ms ease-out,
+      border-color 140ms ease-out,
+      transform 100ms ease-out;
+  }
+
+  .toggle:hover .toggle-box {
+    @media (hover: hover) {
+      border-color: var(--color-ink);
+    }
+  }
+
+  .toggle:active .toggle-box {
+    transform: scale(0.9);
+  }
+
+  .toggle input:checked + .toggle-box {
+    background-color: var(--color-ink);
+    border-color: var(--color-ink);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none' stroke='%23ecebe6' stroke-width='1.4'%3E%3Cpath d='M2 5.2 4.1 7.2 8 2.8'/%3E%3C/svg%3E");
+  }
+
+  .toggle input:focus-visible + .toggle-box {
+    outline: 1px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+}
+
+/* ---------- corner mark + index sheet ---------- */
+
+@layer components {
+  .corner-mark {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition:
+      opacity 220ms ease-out,
+      transform 220ms ease-out,
+      border-color 160ms ease-out,
+      visibility 0s linear 220ms;
+  }
+
+  .corner-mark[data-visible] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 280ms var(--ease-out-soft),
+      transform 280ms var(--ease-out-soft),
+      border-color 160ms ease-out,
+      visibility 0s;
+  }
+
+  .corner-mark:hover {
+    @media (hover: hover) {
+      border-color: var(--color-ink);
+    }
+  }
+
+  .corner-mark:active {
+    transform: scale(0.97);
+    transition-duration: 90ms;
+  }
+
+  .sheet {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0 20px;
+    border: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  .sheet::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.2;
+    background-image: var(--grain);
+    background-size: 220px 220px;
+  }
+
+  .sheet::backdrop {
+    background: var(--color-paper);
+  }
+
+  .sheet[open] {
+    animation: sheet-in 260ms var(--ease-out-soft);
+  }
+
+  .sheet[open] ol {
+    animation: rise 420ms var(--ease-out-soft) both 60ms;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- entrance ---------- */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes develop {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+@utility rise {
+  animation: rise 900ms var(--ease-out-soft) both;
+  animation-delay: calc(var(--i, 0) * 110ms + 120ms);
+}
+
+@utility develop {
+  animation: develop 1400ms var(--ease-out-soft) both;
+  animation-delay: 260ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rise,
+  .develop,
+  .sheet[open],
+  .sheet[open] ol {
+    animation: none;
+  }
+  .corner-mark,
+  .corner-mark[data-visible] {
+    transform: none;
+  }
 }
